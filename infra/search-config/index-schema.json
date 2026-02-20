@@ -1,0 +1,253 @@
+{
+  "name": "hr-documents",
+  "fields": [
+    {
+      "name": "id",
+      "type": "Edm.String",
+      "key": true,
+      "retrievable": true,
+      "searchable": false,
+      "filterable": true,
+      "sortable": false,
+      "facetable": false
+    },
+    {
+      "name": "chunk_content",
+      "type": "Edm.String",
+      "retrievable": true,
+      "searchable": true,
+      "filterable": false,
+      "sortable": false,
+      "facetable": false,
+      "analyzer": "en.microsoft"
+    },
+    {
+      "name": "chunk_vector",
+      "type": "Collection(Edm.Single)",
+      "retrievable": false,
+      "searchable": true,
+      "filterable": false,
+      "sortable": false,
+      "facetable": false,
+      "dimensions": 1536,
+      "vectorSearchProfile": "hr-vector-profile"
+    },
+    {
+      "name": "title",
+      "type": "Edm.String",
+      "retrievable": true,
+      "searchable": true,
+      "filterable": true,
+      "sortable": true,
+      "facetable": false,
+      "analyzer": "en.microsoft"
+    },
+    {
+      "name": "source_url",
+      "type": "Edm.String",
+      "retrievable": true,
+      "searchable": false,
+      "filterable": false,
+      "sortable": false,
+      "facetable": false
+    },
+    {
+      "name": "source_path",
+      "type": "Edm.String",
+      "retrievable": true,
+      "searchable": false,
+      "filterable": true,
+      "sortable": false,
+      "facetable": false
+    },
+    {
+      "name": "document_id",
+      "type": "Edm.String",
+      "retrievable": true,
+      "searchable": false,
+      "filterable": true,
+      "sortable": false,
+      "facetable": false
+    },
+    {
+      "name": "page_number",
+      "type": "Edm.Int32",
+      "retrievable": true,
+      "searchable": false,
+      "filterable": true,
+      "sortable": true,
+      "facetable": false
+    },
+    {
+      "name": "section_heading",
+      "type": "Edm.String",
+      "retrievable": true,
+      "searchable": true,
+      "filterable": false,
+      "sortable": false,
+      "facetable": false,
+      "analyzer": "en.microsoft"
+    },
+    {
+      "name": "category",
+      "type": "Edm.String",
+      "retrievable": true,
+      "searchable": true,
+      "filterable": true,
+      "sortable": false,
+      "facetable": true,
+      "analyzer": "keyword"
+    },
+    {
+      "name": "department",
+      "type": "Edm.String",
+      "retrievable": true,
+      "searchable": true,
+      "filterable": true,
+      "sortable": false,
+      "facetable": true,
+      "analyzer": "keyword"
+    },
+    {
+      "name": "confidentiality",
+      "type": "Edm.String",
+      "retrievable": true,
+      "searchable": false,
+      "filterable": true,
+      "sortable": false,
+      "facetable": true
+    },
+    {
+      "name": "allowed_groups",
+      "type": "Collection(Edm.String)",
+      "retrievable": true,
+      "searchable": false,
+      "filterable": true,
+      "sortable": false,
+      "facetable": false
+    },
+    {
+      "name": "last_modified",
+      "type": "Edm.DateTimeOffset",
+      "retrievable": true,
+      "searchable": false,
+      "filterable": true,
+      "sortable": true,
+      "facetable": false
+    },
+    {
+      "name": "created_date",
+      "type": "Edm.DateTimeOffset",
+      "retrievable": true,
+      "searchable": false,
+      "filterable": true,
+      "sortable": true,
+      "facetable": false
+    },
+    {
+      "name": "file_type",
+      "type": "Edm.String",
+      "retrievable": true,
+      "searchable": false,
+      "filterable": true,
+      "sortable": false,
+      "facetable": true
+    },
+    {
+      "name": "chunk_index",
+      "type": "Edm.Int32",
+      "retrievable": true,
+      "searchable": false,
+      "filterable": false,
+      "sortable": true,
+      "facetable": false
+    },
+    {
+      "name": "total_chunks",
+      "type": "Edm.Int32",
+      "retrievable": true,
+      "searchable": false,
+      "filterable": false,
+      "sortable": false,
+      "facetable": false
+    }
+  ],
+  "vectorSearch": {
+    "algorithms": [
+      {
+        "name": "hr-hnsw-algorithm",
+        "kind": "hnsw",
+        "hnswParameters": {
+          "m": 4,
+          "efConstruction": 400,
+          "efSearch": 500,
+          "metric": "cosine"
+        }
+      }
+    ],
+    "vectorizers": [
+      {
+        "name": "hr-openai-vectorizer",
+        "kind": "azureOpenAI",
+        "azureOpenAIParameters": {
+          "resourceUri": "${AZURE_OPENAI_ENDPOINT}",
+          "deploymentId": "text-embedding-3-small",
+          "modelName": "text-embedding-3-small"
+        }
+      }
+    ],
+    "profiles": [
+      {
+        "name": "hr-vector-profile",
+        "algorithm": "hr-hnsw-algorithm",
+        "vectorizer": "hr-openai-vectorizer"
+      }
+    ]
+  },
+  "semantic": {
+    "configurations": [
+      {
+        "name": "hr-semantic-config",
+        "prioritizedFields": {
+          "titleField": {
+            "fieldName": "title"
+          },
+          "contentFields": [
+            {
+              "fieldName": "chunk_content"
+            }
+          ],
+          "keywordsFields": [
+            {
+              "fieldName": "category"
+            },
+            {
+              "fieldName": "department"
+            },
+            {
+              "fieldName": "section_heading"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "scoringProfiles": [
+    {
+      "name": "freshness-boost",
+      "functions": [
+        {
+          "type": "freshness",
+          "fieldName": "last_modified",
+          "boost": 2,
+          "interpolation": "linear",
+          "freshness": {
+            "boostingDuration": "P365D"
+          }
+        }
+      ],
+      "functionAggregation": "sum"
+    }
+  ],
+  "defaultScoringProfile": "freshness-boost"
+}

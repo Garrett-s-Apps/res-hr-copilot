@@ -1,0 +1,61 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnUnknownIntent
+  id: main
+  actions:
+    - kind: SetVariable
+      id: captureUserQuery
+      variable: Topic.UserQuery
+      value: =System.Activity.Text
+
+    - kind: SearchAndSummarizeContent
+      id: searchHRKnowledge
+      variable: Topic.SearchResult
+      inputs:
+        userInput: =Topic.UserQuery
+      knowledgeSources:
+        - kind: AzureAISearch
+          id: hrSearchSource
+          name: hr-documents
+          endpointUrl: ${AZURE_AI_SEARCH_ENDPOINT}
+          indexName: hr-documents
+          semanticConfigurationName: hr-semantic-config
+          queryType: semantic
+          topK: 5
+          filter: =Concatenate("allowed_groups/any(g: g eq '", User.EntraGroupOids, "')")
+          systemPromptOverride: =Topic.SystemPrompt
+
+    - kind: ConditionGroup
+      id: checkSearchResult
+      conditions:
+        - id: hasResult
+          condition: =!IsBlank(Topic.SearchResult.answer)
+          actions:
+            - kind: SendActivity
+              id: sendAnswer
+              activity:
+                text: =Topic.SearchResult.answer
+
+            - kind: BeginDialog
+              id: triggerFeedback
+              dialog: feedback
+              options:
+                queryText: =Topic.UserQuery
+                answerText: =Topic.SearchResult.answer
+
+        - id: noResult
+          condition: =IsBlank(Topic.SearchResult.answer)
+          actions:
+            - kind: SendActivity
+              id: sendFallback
+              activity:
+                text: |
+                  I don't have that information in our HR documentation. For assistance, please contact the HR team directly:
+
+                  - **Email:** hr@resllc.com
+                  - **Teams:** #hr-help
+                  - **Office hours:** Monday–Friday, 8 AM–5 PM CT
+
+id: fallback
+name: Generative Answers Fallback
+description: Catches unrecognized inputs, queries Azure AI Search, returns grounded answer with sources, and triggers feedback collection

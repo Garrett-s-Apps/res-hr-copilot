@@ -1,0 +1,115 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnBeginDialog
+  id: main
+  actions:
+    - kind: SendActivity
+      id: sendFeedbackCard
+      activity:
+        attachments:
+          - contentType: application/vnd.microsoft.card.adaptive
+            content:
+              $schema: http://adaptivecards.io/schemas/adaptive-card.json
+              type: AdaptiveCard
+              version: "1.5"
+              body:
+                - type: TextBlock
+                  text: "Was this answer helpful?"
+                  weight: Bolder
+                  size: Medium
+                - type: ActionSet
+                  actions:
+                    - type: Action.Submit
+                      id: thumbsUp
+                      title: "👍 Yes"
+                      data:
+                        feedbackValue: "positive"
+                        action: submitFeedback
+                    - type: Action.Submit
+                      id: thumbsDown
+                      title: "👎 No"
+                      data:
+                        feedbackValue: "negative"
+                        action: submitFeedback
+
+    - kind: WaitForInput
+      id: waitForFeedback
+      variable: Topic.FeedbackResponse
+
+    - kind: ConditionGroup
+      id: handleFeedbackType
+      conditions:
+        - id: negativeFeedback
+          condition: =Topic.FeedbackResponse.feedbackValue = "negative"
+          actions:
+            - kind: SendActivity
+              id: askForComment
+              activity:
+                attachments:
+                  - contentType: application/vnd.microsoft.card.adaptive
+                    content:
+                      $schema: http://adaptivecards.io/schemas/adaptive-card.json
+                      type: AdaptiveCard
+                      version: "1.5"
+                      body:
+                        - type: TextBlock
+                          text: "Sorry that wasn't helpful. What could be improved?"
+                          wrap: true
+                        - type: Input.Text
+                          id: feedbackComment
+                          placeholder: "Optional: tell us what was missing or wrong..."
+                          isMultiline: true
+                          maxLength: 500
+                      actions:
+                        - type: Action.Submit
+                          title: "Submit"
+                          data:
+                            action: submitComment
+
+            - kind: WaitForInput
+              id: waitForComment
+              variable: Topic.FeedbackComment
+
+            - kind: SetVariable
+              id: setCommentText
+              variable: Topic.CommentText
+              value: =Coalesce(Topic.FeedbackComment.feedbackComment, "")
+
+        - id: positiveFeedback
+          condition: =Topic.FeedbackResponse.feedbackValue = "positive"
+          actions:
+            - kind: SetVariable
+              id: clearComment
+              variable: Topic.CommentText
+              value: ""
+
+    - kind: TrackCustomEvent
+      id: logFeedbackToAppInsights
+      eventName: hr_copilot_feedback
+      properties:
+        userId: =User.Id
+        userDisplayName: =User.DisplayName
+        feedbackValue: =Topic.FeedbackResponse.feedbackValue
+        feedbackComment: =Topic.CommentText
+        queryText: =Topic.Input.queryText
+        answerText: =Left(Topic.Input.answerText, 500)
+        timestamp: =Text(Now(), "yyyy-MM-ddTHH:mm:ssZ")
+        channel: =System.Channel
+        conversationId: =System.Conversation.Id
+
+    - kind: SendActivity
+      id: thankUser
+      activity:
+        text: =If(Topic.FeedbackResponse.feedbackValue = "positive", "Glad that helped! Let me know if you have other questions.", "Thank you for the feedback — it helps us improve. Is there anything else I can help you with?")
+
+inputProperties:
+  queryText:
+    type: String
+    description: The user's original question
+  answerText:
+    type: String
+    description: The answer that was generated
+
+id: feedback
+name: Feedback Collection
+description: Collects thumbs up/down feedback with optional comment after every generative answer and logs to Application Insights as hr_copilot_feedback event

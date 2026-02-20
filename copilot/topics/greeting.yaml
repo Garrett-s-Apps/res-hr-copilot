@@ -1,0 +1,52 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnConversationStart
+  id: main
+  actions:
+    - kind: SendActivity
+      id: welcomeMessage
+      activity:
+        text: |
+          👋 Welcome to the **RES HR Assistant**!
+
+          I can help you find answers to HR questions using RES's official policies and documentation — instantly, any time.
+
+          **I can help you with:**
+          - 📅 PTO, vacation, and leave policies
+          - 🏥 Benefits enrollment and health insurance
+          - 📋 Onboarding checklists and new hire steps
+          - 💰 Payroll, expense reimbursement, and 401(k)
+          - 🏠 Remote and hybrid work guidelines
+          - 📜 Code of conduct and compliance policies
+
+          **Try asking me one of these:**
+        attachments:
+          - contentType: application/vnd.microsoft.card.hero
+            content:
+              buttons:
+                - type: imBack
+                  title: "What is our PTO policy?"
+                  value: "What is our PTO policy?"
+                - type: imBack
+                  title: "How do I enroll in benefits?"
+                  value: "How do I enroll in benefits?"
+                - type: imBack
+                  title: "What's on the new hire onboarding checklist?"
+                  value: "What's on the new hire onboarding checklist?"
+
+triggerPhrases:
+  - hello
+  - hi
+  - hey
+  - help
+  - what can you do
+  - get started
+  - start
+  - who are you
+  - what is this
+  - good morning
+  - good afternoon
+
+id: greeting
+name: Greeting
+description: Welcomes the user and presents the agent's capabilities with starter questions

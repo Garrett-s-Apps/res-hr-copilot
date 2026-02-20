@@ -1,0 +1,129 @@
+{
+  "name": "hr-enrichment-skillset",
+  "description": "Skillset for RES HR document enrichment: text splitting, embedding generation, and key phrase extraction",
+  "cognitiveServices": {
+    "@odata.type": "#Microsoft.Azure.Search.CognitiveServicesByKey",
+    "key": "${COGNITIVE_SERVICES_KEY}"
+  },
+  "skills": [
+    {
+      "@odata.type": "#Microsoft.Skills.Text.SplitSkill",
+      "name": "hr-text-split",
+      "description": "Splits document pages into overlapping chunks suitable for semantic search",
+      "context": "/document",
+      "textSplitMode": "pages",
+      "maximumPageLength": 2000,
+      "pageOverlapLength": 500,
+      "maximumPagesToTake": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "source": "/document/content"
+        },
+        {
+          "name": "languageCode",
+          "source": "/document/language"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "textItems",
+          "targetName": "pages"
+        }
+      ]
+    },
+    {
+      "@odata.type": "#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill",
+      "name": "hr-embedding",
+      "description": "Generates 1536-dimensional embeddings using text-embedding-3-small for semantic retrieval",
+      "context": "/document/pages/*",
+      "resourceUri": "${AZURE_OPENAI_ENDPOINT}",
+      "apiKey": "${AZURE_OPENAI_API_KEY}",
+      "deploymentId": "text-embedding-3-small",
+      "modelName": "text-embedding-3-small",
+      "dimensions": 1536,
+      "inputs": [
+        {
+          "name": "text",
+          "source": "/document/pages/*"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "embedding",
+          "targetName": "chunk_vector"
+        }
+      ]
+    },
+    {
+      "@odata.type": "#Microsoft.Skills.Text.KeyPhraseExtractionSkill",
+      "name": "hr-key-phrases",
+      "description": "Extracts key phrases to improve keyword-based discoverability alongside semantic search",
+      "context": "/document/pages/*",
+      "defaultLanguageCode": "en",
+      "maxKeyPhraseCount": 10,
+      "inputs": [
+        {
+          "name": "text",
+          "source": "/document/pages/*"
+        },
+        {
+          "name": "languageCode",
+          "source": "/document/language"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "keyPhrases",
+          "targetName": "key_phrases"
+        }
+      ]
+    }
+  ],
+  "indexProjections": {
+    "selectors": [
+      {
+        "targetIndexName": "hr-documents",
+        "parentKeyFieldName": "document_id",
+        "sourceContext": "/document/pages/*",
+        "mappings": [
+          {
+            "name": "chunk_content",
+            "source": "/document/pages/*"
+          },
+          {
+            "name": "chunk_vector",
+            "source": "/document/pages/*/chunk_vector"
+          },
+          {
+            "name": "title",
+            "source": "/document/metadata_spo_item_name"
+          },
+          {
+            "name": "source_url",
+            "source": "/document/metadata_spo_item_weburi"
+          },
+          {
+            "name": "source_path",
+            "source": "/document/metadata_spo_item_path"
+          },
+          {
+            "name": "last_modified",
+            "source": "/document/metadata_spo_item_last_modified"
+          },
+          {
+            "name": "created_date",
+            "source": "/document/metadata_spo_item_created"
+          },
+          {
+            "name": "file_type",
+            "source": "/document/metadata_spo_item_extension"
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "projectionMode": "generatedKeyAsId"
+    }
+  }
+}

@@ -1,0 +1,99 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.env.local
+
+# Environment / secrets — NEVER commit these
+.env
+.env.*
+local.settings.json
+*.env
+secrets/
+*.pem
+*.key
+*.pfx
+*.p12
+
+# Azure Functions
+.azure/
+bin/
+obj/
+
+# Azure CLI
+.azure/
+
+# Azure deployment outputs
+azuredeploy.parameters.json.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Test artifacts
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+.tox/
+nosetests.xml
+pytest-results.xml
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Ruff
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Node (if any tooling)
+node_modules/
+npm-debug.log*
+
+# Terraform / Bicep state
+*.tfstate
+*.tfstate.backup
+.terraform/
+*.tfplan
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak

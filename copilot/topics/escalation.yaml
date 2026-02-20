@@ -1,0 +1,69 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnIntent
+  id: main
+  intent: EscalateToHR
+  actions:
+    - kind: SendActivity
+      id: acknowledgeEscalation
+      activity:
+        text: |
+          Of course — I'll connect you with the HR team directly.
+
+    - kind: SendActivity
+      id: provideContactInfo
+      activity:
+        text: |
+          **HR Team Contact Information**
+
+          📧 **Email:** [hr@resllc.com](mailto:hr@resllc.com)
+          💬 **Teams Channel:** [#hr-help](https://teams.microsoft.com/l/channel/hr-help)
+          📞 **Phone:** Available in the Employee Directory on SharePoint
+          🕐 **Office hours:** Monday–Friday, 8 AM–5 PM CT
+
+          For urgent matters outside business hours, please email hr@resllc.com with **URGENT** in the subject line and a team member will respond as soon as possible.
+
+    - kind: SetVariable
+      id: setEscalationTimestamp
+      variable: Topic.EscalationTimestamp
+      value: =Text(Now(), "yyyy-MM-ddTHH:mm:ssZ")
+
+    - kind: SetVariable
+      id: setEscalationUser
+      variable: Topic.EscalationUserId
+      value: =User.Id
+
+    - kind: TrackCustomEvent
+      id: logEscalationToAppInsights
+      eventName: hr_copilot_escalation
+      properties:
+        userId: =User.Id
+        userDisplayName: =User.DisplayName
+        timestamp: =Topic.EscalationTimestamp
+        channel: =System.Channel
+        conversationId: =System.Conversation.Id
+        triggerPhrase: =System.Activity.Text
+
+    - kind: SendActivity
+      id: closingMessage
+      activity:
+        text: |
+          Is there anything else I can help you find in our HR documentation while you wait to hear from the team?
+
+triggerPhrases:
+  - talk to HR
+  - speak to a person
+  - speak to someone
+  - talk to a human
+  - escalate
+  - contact HR
+  - I need HR
+  - connect me to HR
+  - real person
+  - human help
+  - HR contact
+  - reach HR
+
+id: escalation
+name: Escalate to HR
+description: Provides HR contact details, logs the escalation event to Application Insights, and offers continued self-service assistance
