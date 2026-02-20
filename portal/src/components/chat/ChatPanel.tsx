@@ -93,7 +93,7 @@ export default function ChatPanel({ open, onClose, initialQuery }: ChatPanelProp
     {
       id: "welcome",
       role: "assistant",
-      content: "Hi! I'm the RES Connect AI assistant. Ask me anything about HR policies, benefits, time off, expenses, or any other company information.",
+      content: "Hi! I'm RES AI, your company knowledge base assistant. I can help you find procedures, understand contracts, locate policies, and walk you through how-to guides.",
       timestamp: new Date(),
     },
   ]);
@@ -139,7 +139,7 @@ export default function ChatPanel({ open, onClose, initialQuery }: ChatPanelProp
           {
             id: `error-${Date.now()}`,
             role: "assistant",
-            content: "Sorry, I encountered an error. Please try again or contact HR directly at hr@res-llc.com.",
+            content: "Sorry, I encountered an error. Please try again or contact the appropriate team directly.",
             timestamp: new Date(),
           },
         ]);
@@ -188,7 +188,7 @@ export default function ChatPanel({ open, onClose, initialQuery }: ChatPanelProp
               <Bot className="h-4 w-4 text-navy" />
             </div>
             <div>
-              <p className="text-white font-semibold text-sm">HR Assistant</p>
+              <p className="text-white font-semibold text-sm">RES AI</p>
               <div className="flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
                 <span className="text-gray-300 text-xs">Online</span>
@@ -223,9 +223,9 @@ export default function ChatPanel({ open, onClose, initialQuery }: ChatPanelProp
         {messages.length === 1 && (
           <div className="px-4 pb-2 flex flex-wrap gap-1.5">
             {[
-              "How many vacation days do I get?",
-              "How do I enroll in benefits?",
-              "What's the expense reimbursement limit?",
+              "How do I restart a server?",
+              "What's the expense approval process?",
+              "Where's the client onboarding SOP?",
             ].map((prompt) => (
               <button
                 key={prompt}
@@ -245,7 +245,7 @@ export default function ChatPanel({ open, onClose, initialQuery }: ChatPanelProp
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about policies, benefits..."
+              placeholder="Ask about procedures, contracts, policies..."
               disabled={loading}
               className="flex-1"
             />

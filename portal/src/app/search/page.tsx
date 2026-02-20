@@ -10,8 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import type { SearchResult } from "@/types";
 import { formatDate } from "@/lib/utils";
 
-const DEPARTMENTS = ["All", "HR", "Operations", "Finance", "Legal"];
-const DOC_TYPES = ["All", "Policy", "Benefits", "Reference", "IT", "Safety", "Compliance"];
+const DEPARTMENTS = ["All", "IT", "Operations", "Finance", "Legal", "Facilities"];
+const DOC_TYPES = ["All", "Policy", "Compliance", "Reference", "IT", "Safety"];
 
 export default function SearchPage() {
   return (
@@ -81,7 +81,7 @@ function SearchPageInner() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 type="search"
-                placeholder="Search HR documents..."
+                placeholder="Search procedures, contracts, policies, how-to guides..."
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 className="pl-10 bg-white h-11"
@@ -255,7 +255,7 @@ function SearchPageInner() {
                 </p>
                 <Button onClick={() => setChatQuery(query)} className="gap-2">
                   <MessageSquare className="h-4 w-4" />
-                  Ask HR AI
+                  Ask RES AI
                 </Button>
               </div>
             )}

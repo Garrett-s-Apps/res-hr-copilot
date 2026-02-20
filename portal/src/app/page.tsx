@@ -5,16 +5,16 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Search,
-  BookOpen,
-  Heart,
   Monitor,
   Users,
-  Clock,
   DollarSign,
-  AlertCircle,
   ChevronRight,
   FileText,
   Bell,
+  BookOpen,
+  Briefcase,
+  Shield,
+  Building2,
 } from "lucide-react";
 import PageShell from "@/components/layout/PageShell";
 import { Button } from "@/components/ui/button";
@@ -24,19 +24,19 @@ import { mockAnnouncements, mockDocuments } from "@/lib/mock-data";
 import { formatDate } from "@/lib/utils";
 
 const quickLinks = [
-  { label: "HR Handbook", icon: BookOpen, href: "/docs/doc-001", color: "bg-blue-50 text-blue-700 border-blue-200" },
-  { label: "Benefits", icon: Heart, href: "/docs/doc-003", color: "bg-rose-50 text-rose-700 border-rose-200" },
-  { label: "IT Help", icon: Monitor, href: "/docs/doc-006", color: "bg-purple-50 text-purple-700 border-purple-200" },
-  { label: "Org Chart", icon: Users, href: "/docs/doc-005", color: "bg-teal-50 text-teal-700 border-teal-200" },
-  { label: "Time Off", icon: Clock, href: "/docs/doc-002", color: "bg-amber-50 text-amber-700 border-amber-200" },
-  { label: "Payroll", icon: DollarSign, href: "/docs/doc-007", color: "bg-green-50 text-green-700 border-green-200" },
+  { label: "IT Help", icon: Monitor, href: "/docs/doc-001", color: "bg-purple-50 text-purple-700 border-purple-200" },
+  { label: "Procedures", icon: BookOpen, href: "/docs/doc-006", color: "bg-blue-50 text-blue-700 border-blue-200" },
+  { label: "Contracts", icon: FileText, href: "/docs/doc-002", color: "bg-rose-50 text-rose-700 border-rose-200" },
+  { label: "Finance", icon: DollarSign, href: "/docs/doc-004", color: "bg-green-50 text-green-700 border-green-200" },
+  { label: "Projects", icon: Briefcase, href: "/docs/doc-003", color: "bg-amber-50 text-amber-700 border-amber-200" },
+  { label: "Policies", icon: Shield, href: "/docs/doc-008", color: "bg-teal-50 text-teal-700 border-teal-200" },
 ];
 
 const departments = [
-  { id: "HR", name: "Human Resources", icon: Users, color: "border-l-blue-500", docs: mockDocuments.filter((d) => d.department === "HR") },
-  { id: "Operations", name: "Operations & IT", icon: Monitor, color: "border-l-purple-500", docs: mockDocuments.filter((d) => d.department === "Operations") },
-  { id: "Finance", name: "Finance", icon: DollarSign, color: "border-l-green-500", docs: mockDocuments.filter((d) => d.department === "Finance") },
-  { id: "Legal", name: "Legal & Compliance", icon: FileText, color: "border-l-red-500", docs: mockDocuments.filter((d) => d.department === "Legal") },
+  { id: "IT", name: "IT & Systems", icon: Monitor, color: "border-l-purple-500", docs: mockDocuments.filter((d) => d.department === "IT") },
+  { id: "Operations", name: "Operations & SOPs", icon: Briefcase, color: "border-l-blue-500", docs: mockDocuments.filter((d) => d.department === "Operations") },
+  { id: "Legal", name: "Legal & Contracts", icon: FileText, color: "border-l-red-500", docs: mockDocuments.filter((d) => d.department === "Legal") },
+  { id: "Finance", name: "Finance & Controls", icon: DollarSign, color: "border-l-green-500", docs: mockDocuments.filter((d) => d.department === "Finance") },
 ];
 
 export default function HomePage() {
@@ -51,7 +51,7 @@ export default function HomePage() {
     }
   }
 
-  function handleAskHR() {
+  function handleAskAI() {
     if (heroQuery.trim()) {
       setChatQuery(heroQuery.trim());
     }
@@ -64,21 +64,21 @@ export default function HomePage() {
         <div className="max-w-3xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-gold/20 text-gold px-3 py-1 rounded-full text-sm font-medium mb-4">
             <span className="w-2 h-2 rounded-full bg-gold" />
-            AI-Powered HR Assistant
+            AI-Powered Knowledge Base
           </div>
           <h1 className="text-4xl sm:text-5xl font-bold mb-3 leading-tight">
             Welcome to{" "}
             <span className="text-gold">RES Connect</span>
           </h1>
           <p className="text-gray-300 text-lg mb-8">
-            Find HR policies, benefits info, and company documents — instantly.
+            Find company procedures, contracts, policies, and how-to guides — instantly.
           </p>
           <form onSubmit={handleHeroSearch} className="flex flex-col sm:flex-row gap-3 max-w-xl mx-auto">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
               <Input
                 type="search"
-                placeholder="Ask anything — &ldquo;How many vacation days do I get?&rdquo;"
+                placeholder="Ask anything — &ldquo;How do I submit an expense report?&rdquo;"
                 value={heroQuery}
                 onChange={(e) => setHeroQuery(e.target.value)}
                 className="pl-10 h-12 text-base bg-white text-gray-900 border-0 w-full"
@@ -92,7 +92,7 @@ export default function HomePage() {
                 type="button"
                 size="lg"
                 variant="outline"
-                onClick={handleAskHR}
+                onClick={handleAskAI}
                 className="border-white/30 text-white hover:bg-white/10 px-4"
               >
                 Ask AI
