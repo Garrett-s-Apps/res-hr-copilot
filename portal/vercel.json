@@ -1,0 +1,14 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "env": {
+    "AZURE_SEARCH_ENDPOINT": "@azure_search_endpoint",
+    "AZURE_SEARCH_KEY": "@azure_search_key",
+    "AZURE_SEARCH_INDEX": "@azure_search_index",
+    "AZURE_OPENAI_ENDPOINT": "@azure_openai_endpoint",
+    "AZURE_OPENAI_KEY": "@azure_openai_key",
+    "AZURE_OPENAI_DEPLOYMENT": "@azure_openai_deployment"
+  }
+}
