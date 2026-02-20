@@ -82,6 +82,11 @@ dmypy.json
 node_modules/
 npm-debug.log*
 
+# Next.js
+portal/.next/
+portal/out/
+.next/
+
 # Terraform / Bicep state
 *.tfstate
 *.tfstate.backup
